@@ -2,8 +2,9 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import Link from 'next/link'
-import { PenSquare, LogOut, Home, BookOpen } from 'lucide-react'
+import { PenSquare, LogOut, Home, BookOpen, User } from 'lucide-react'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -47,9 +48,16 @@ export default async function DashboardPage() {
               </Button>
             </Link>
             <div className="h-6 w-px bg-border" />
-            <span className="text-sm text-muted-foreground">
-              {profile?.full_name || profile?.username}
-            </span>
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950 dark:to-purple-950 border border-blue-200 dark:border-blue-800">
+              <Avatar className="h-8 w-8">
+                <AvatarFallback className="text-sm">
+                  {(profile?.full_name || profile?.username || 'U').charAt(0).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+              <span className="text-sm font-semibold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">
+                {profile?.full_name || profile?.username}
+              </span>
+            </div>
             <form action="/auth/signout" method="post">
               <Button variant="outline" size="sm" type="submit">
                 <LogOut className="mr-2 h-4 w-4" />
