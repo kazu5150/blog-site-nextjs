@@ -2,7 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import Link from 'next/link'
-import { Calendar, User, LogIn } from 'lucide-react'
+import { Calendar, User, LogIn, Heart, MessageSquare } from 'lucide-react'
 
 export default async function Home() {
   const supabase = await createClient()
@@ -16,7 +16,9 @@ export default async function Home() {
       profiles:author_id (
         username,
         full_name
-      )
+      ),
+      likes(count),
+      comments(count)
     `)
     .eq('published', true)
     .order('created_at', { ascending: false })
@@ -90,9 +92,23 @@ export default async function Home() {
                     </div>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-sm text-muted-foreground line-clamp-4">
+                    <p className="text-sm text-muted-foreground line-clamp-4 mb-4">
                       {post.content}
                     </p>
+                    <div className="flex items-center gap-3 pt-2 border-t">
+                      <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800">
+                        <Heart className="h-3.5 w-3.5 text-red-500" />
+                        <span className="text-xs font-semibold text-red-600 dark:text-red-400">
+                          {post.likes?.[0]?.count || 0}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800">
+                        <MessageSquare className="h-3.5 w-3.5 text-blue-500" />
+                        <span className="text-xs font-semibold text-blue-600 dark:text-blue-400">
+                          {post.comments?.[0]?.count || 0}
+                        </span>
+                      </div>
+                    </div>
                   </CardContent>
                 </Card>
               </Link>
