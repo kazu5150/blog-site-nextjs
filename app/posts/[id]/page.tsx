@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
-import { ArrowLeft, Calendar, User } from 'lucide-react'
+import { ArrowLeft, Calendar, User, Home, BookOpen } from 'lucide-react'
 import Link from 'next/link'
 
 export default async function PostPage({ params }: { params: Promise<{ id: string }> }) {
@@ -33,14 +33,28 @@ export default async function PostPage({ params }: { params: Promise<{ id: strin
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900">
-      <header className="border-b bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm">
+      <header className="border-b bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href={isAuthor ? '/dashboard' : '/'}>
-            <Button variant="ghost" size="sm">
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              戻る
-            </Button>
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link href={isAuthor ? '/dashboard' : '/'}>
+              <Button variant="ghost" size="sm">
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                戻る
+              </Button>
+            </Link>
+            <Link href="/">
+              <Button variant="ghost" size="sm">
+                <Home className="mr-2 h-4 w-4" />
+                ホーム
+              </Button>
+            </Link>
+            <Link href="/#published-posts">
+              <Button variant="ghost" size="sm">
+                <BookOpen className="mr-2 h-4 w-4" />
+                公開投稿
+              </Button>
+            </Link>
+          </div>
           {isAuthor && (
             <Link href={`/posts/${id}/edit`}>
               <Button size="sm">編集</Button>

@@ -56,7 +56,7 @@ export default async function Home() {
       </header>
 
       <main className="container mx-auto px-4 py-12">
-        <div className="text-center mb-12">
+        <div id="published-posts" className="text-center mb-12">
           <h2 className="text-5xl font-bold mb-4 bg-gradient-to-r from-slate-900 to-slate-700 dark:from-slate-100 dark:to-slate-300 bg-clip-text text-transparent">
             最新の投稿
           </h2>

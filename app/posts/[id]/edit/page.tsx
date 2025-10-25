@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Switch } from '@/components/ui/switch'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { ArrowLeft, Trash2 } from 'lucide-react'
+import { ArrowLeft, Trash2, Home, BookOpen } from 'lucide-react'
 import Link from 'next/link'
 
 export default function EditPostPage() {
@@ -100,12 +100,24 @@ export default function EditPostPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900">
-      <header className="border-b bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm">
-        <div className="container mx-auto px-4 py-4">
+      <header className="border-b bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm sticky top-0 z-50">
+        <div className="container mx-auto px-4 py-4 flex items-center gap-3">
           <Link href="/dashboard">
             <Button variant="ghost" size="sm">
               <ArrowLeft className="mr-2 h-4 w-4" />
-              ダッシュボードに戻る
+              ダッシュボード
+            </Button>
+          </Link>
+          <Link href="/">
+            <Button variant="ghost" size="sm">
+              <Home className="mr-2 h-4 w-4" />
+              ホーム
+            </Button>
+          </Link>
+          <Link href="/#published-posts">
+            <Button variant="ghost" size="sm">
+              <BookOpen className="mr-2 h-4 w-4" />
+              公開投稿
             </Button>
           </Link>
         </div>

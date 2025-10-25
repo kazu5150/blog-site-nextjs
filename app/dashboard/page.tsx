@@ -3,7 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import Link from 'next/link'
-import { PenSquare, LogOut } from 'lucide-react'
+import { PenSquare, LogOut, Home, BookOpen } from 'lucide-react'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -30,10 +30,23 @@ export default async function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900">
-      <header className="border-b bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm">
+      <header className="border-b bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <h1 className="text-2xl font-bold">ダッシュボード</h1>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
+            <Link href="/">
+              <Button variant="ghost" size="sm">
+                <Home className="mr-2 h-4 w-4" />
+                ホーム
+              </Button>
+            </Link>
+            <Link href="/#published-posts">
+              <Button variant="ghost" size="sm">
+                <BookOpen className="mr-2 h-4 w-4" />
+                公開投稿
+              </Button>
+            </Link>
+            <div className="h-6 w-px bg-border" />
             <span className="text-sm text-muted-foreground">
               {profile?.full_name || profile?.username}
             </span>
