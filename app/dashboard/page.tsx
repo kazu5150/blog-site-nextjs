@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import Link from 'next/link'
-import { PenSquare, LogOut, Home, BookOpen, User } from 'lucide-react'
+import { PenSquare, LogOut, Home, BookOpen, User, Heart, MessageSquare } from 'lucide-react'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -25,7 +25,11 @@ export default async function DashboardPage() {
 
   const { data: posts } = await supabase
     .from('posts')
-    .select('*')
+    .select(`
+      *,
+      likes(count),
+      comments(count)
+    `)
     .eq('author_id', user.id)
     .order('created_at', { ascending: false })
 
@@ -111,6 +115,16 @@ export default async function DashboardPage() {
                   <p className="text-sm text-muted-foreground line-clamp-3 mb-4">
                     {post.content}
                   </p>
+                  <div className="flex items-center gap-4 mb-4 text-sm text-muted-foreground">
+                    <div className="flex items-center gap-1">
+                      <Heart className="h-4 w-4" />
+                      <span>{post.likes?.[0]?.count || 0}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <MessageSquare className="h-4 w-4" />
+                      <span>{post.comments?.[0]?.count || 0}</span>
+                    </div>
+                  </div>
                   <div className="flex gap-2">
                     <Link href={`/posts/${post.id}/edit`} className="flex-1">
                       <Button variant="outline" className="w-full" size="sm">

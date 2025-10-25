@@ -4,6 +4,8 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { ArrowLeft, Calendar, User, Home, BookOpen } from 'lucide-react'
 import Link from 'next/link'
+import { LikeButton } from '@/components/post/like-button'
+import { CommentsSection } from '@/components/post/comments-section'
 
 export default async function PostPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -30,6 +32,37 @@ export default async function PostPage({ params }: { params: Promise<{ id: strin
   } = await supabase.auth.getUser()
 
   const isAuthor = user?.id === post.author_id
+
+  // Get likes count and user's like status
+  const { count: likesCount } = await supabase
+    .from('likes')
+    .select('*', { count: 'exact', head: true })
+    .eq('post_id', id)
+
+  let isLiked = false
+  if (user) {
+    const { data: userLike } = await supabase
+      .from('likes')
+      .select('id')
+      .eq('post_id', id)
+      .eq('user_id', user.id)
+      .single()
+
+    isLiked = !!userLike
+  }
+
+  // Get comments
+  const { data: comments } = await supabase
+    .from('comments')
+    .select(`
+      *,
+      profiles:user_id (
+        username,
+        full_name
+      )
+    `)
+    .eq('post_id', id)
+    .order('created_at', { ascending: false })
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900">
@@ -64,33 +97,49 @@ export default async function PostPage({ params }: { params: Promise<{ id: strin
       </header>
 
       <main className="container mx-auto px-4 py-8 max-w-4xl">
-        <Card>
-          <CardHeader className="space-y-4">
-            <div>
-              {!post.published && (
-                <span className="inline-flex items-center rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-semibold text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100 mb-4">
-                  下書き
-                </span>
-              )}
-              <h1 className="text-4xl font-bold mt-2">{post.title}</h1>
-            </div>
-            <div className="flex items-center gap-4 text-sm text-muted-foreground">
-              <div className="flex items-center gap-1">
-                <User className="h-4 w-4" />
-                <span>{post.profiles?.full_name || post.profiles?.username || '匿名'}</span>
+        <div className="space-y-6">
+          <Card>
+            <CardHeader className="space-y-4">
+              <div>
+                {!post.published && (
+                  <span className="inline-flex items-center rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-semibold text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100 mb-4">
+                    下書き
+                  </span>
+                )}
+                <h1 className="text-4xl font-bold mt-2">{post.title}</h1>
               </div>
-              <div className="flex items-center gap-1">
-                <Calendar className="h-4 w-4" />
-                <time>{new Date(post.created_at).toLocaleDateString('ja-JP')}</time>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                  <div className="flex items-center gap-1">
+                    <User className="h-4 w-4" />
+                    <span>{post.profiles?.full_name || post.profiles?.username || '匿名'}</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Calendar className="h-4 w-4" />
+                    <time>{new Date(post.created_at).toLocaleDateString('ja-JP')}</time>
+                  </div>
+                </div>
+                <LikeButton
+                  postId={id}
+                  initialLikes={likesCount || 0}
+                  initialIsLiked={isLiked}
+                  userId={user?.id}
+                />
               </div>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="prose prose-slate dark:prose-invert max-w-none">
-              <p className="whitespace-pre-wrap">{post.content}</p>
-            </div>
-          </CardContent>
-        </Card>
+            </CardHeader>
+            <CardContent>
+              <div className="prose prose-slate dark:prose-invert max-w-none">
+                <p className="whitespace-pre-wrap">{post.content}</p>
+              </div>
+            </CardContent>
+          </Card>
+
+          <CommentsSection
+            postId={id}
+            userId={user?.id}
+            initialComments={comments || []}
+          />
+        </div>
       </main>
     </div>
   )
